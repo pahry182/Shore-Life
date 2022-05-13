@@ -5,12 +5,17 @@ using UnityEngine;
 public class PlayerExploreController : MonoBehaviour
 {
     private Rigidbody2D _rb;
+    private Animator _an;
+    private Vector2 movement;
+
 
     public float movementSpeed = 6;
+
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _an = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -23,33 +28,18 @@ public class PlayerExploreController : MonoBehaviour
         Move();
     }
 
+    private void FixedUpdate()
+    {
+        _rb.MovePosition(_rb.position + movement * movementSpeed * Time.fixedDeltaTime);
+    }
+
     private void Move()
     {
+        movement.x = Input.GetAxis("Horizontal");
+        movement.y = Input.GetAxis("Vertical");
 
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            _rb.velocity = new Vector2(movementSpeed, _rb.velocity.y);
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            _rb.velocity = new Vector2(-movementSpeed, _rb.velocity.y);
-        }
-        else
-        {
-            _rb.velocity = new Vector2(0, _rb.velocity.y);
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, movementSpeed);
-        }
-        else if (Input.GetKey(KeyCode.DownArrow))
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, -movementSpeed);
-        }
-        else
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, 0);
-        }
-    }
+        _an.SetFloat("Horizontal", movement.x);
+        _an.SetFloat("Vertical", movement.y);
+        _an.SetFloat("Speed", movement.sqrMagnitude);
+    }  
 }
